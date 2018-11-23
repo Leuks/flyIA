@@ -34,18 +34,23 @@ function animate () {
     }
 
     //Move forward
-    butterfly.goForward(0.2);
+    butterfly.goForward(0.1);
     adjustCameraPosition();
 
+    //Generate new bloc in front of the butterfly
     generateNewBloc(butterfly.position.z - dist_to_create_bloc)
 
     //Removes blocks that are no longer visible
-    blocToRemove = blocList.filter(bloc => bloc.position.z > butterfly.position.z);
+    var blocToRemove = blocList.filter(bloc => bloc.position.z > butterfly.position.z);
     for(let i = 0; i < blocToRemove.length ; i++){
         let bloc = blocToRemove[i];
         blocList.splice(blocList.indexOf(bloc), 1);
         disposeSceneChild(bloc.cube)
     }
+
+   /* butterfly.updateIntersection().forEach(function(raycast){
+        console.log(raycast);
+    });*/
 
     renderer.render(scene, camera);
     requestAnimationFrame( animate );

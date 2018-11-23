@@ -1,8 +1,8 @@
 
 class Butterfly {
 
-    constructor(width, height){
-        this.position = new THREE.Vector3(width / 2, height / 2, -dist_to_create_butterfly);
+    constructor(position, width, height, raycastList){
+        this.position = position;
         this.velocity = 0.2;
         this.gravity = 0.7;
         this.wingsSize = 40;
@@ -15,6 +15,8 @@ class Butterfly {
         mesh.position.copy(this.position);
 
         this.sphere = mesh;
+
+        this.raycasts = raycastList;
     }
 
     static createNewButterfly(){
@@ -22,7 +24,23 @@ class Butterfly {
         let width = visionUnits["width"];
         let height = visionUnits["height"];
 
-        return new Butterfly(width, height);
+        let position = new THREE.Vector3(width / 2, height / 2, -dist_to_create_butterfly)
+
+        let directionsList = [{"name": "up", "direction": new THREE.Vector3(0, 1, 0)}, {"name": "upright", "direction": new THREE.Vector3(1, 1, 0)},{"name": "right", "direction": new THREE.Vector3(1, 0, 0)},
+            {"name": "downright", "direction": new THREE.Vector3(1, -1, 0)},{"name": "down", "direction": new THREE.Vector3(1, -1, 0)},{"name": "downleft", "direction": new THREE.Vector3(-1, -1, 0)},
+            {"name": "left", "direction": new THREE.Vector3(-1, 0, 0)},{"name": "upleft", "direction": new THREE.Vector3(-1, 1, 0)},
+            {"name": "updiag", "direction": new THREE.Vector3(0, 1, -1)}, {"name": "uprightdiag", "direction": new THREE.Vector3(1, 1, -1)},{"name": "rightdiag", "direction": new THREE.Vector3(1, 0, -1)},
+            {"name": "downrightdiag", "direction": new THREE.Vector3(1, -1, -1)},{"name": "downdiag", "direction": new THREE.Vector3(1, -1, -1)},{"name": "downleftdiag", "direction": new THREE.Vector3(-1, -1, -1)},
+            {"name": "leftdiag", "direction": new THREE.Vector3(-1, 0, -1)},{"name": "upleftdiag", "direction": new THREE.Vector3(-1, 1, -1)},
+            {"name": "front", "direction": new THREE.Vector3(0, 0, -1)}];
+
+        var raycastList = [];
+        for(let i=0; i < directionsList.length; i++){
+            let direction = directionsList[i];
+            raycastList.push({"name": direction["name"], "ray": new THREE.Raycaster(position, direction["direction"])});
+        }
+
+        return new Butterfly(position, width, height, raycastList);
     }
 
     setPosition(x, y ,z){
@@ -49,6 +67,17 @@ class Butterfly {
 
     goDown(){
         this.y += 20;
+    }
+
+    updateIntersection(){
+        var collisions = [];
+        for(let i=0; i < this.raycasts.length; i++){
+            let raycast = this.raycasts[i];
+            let collisionResults = raycast["ray"].intersectObjects(blocList.map(bloc => bloc.cube), true);
+            if(collisionResults.length > 0)
+                collisions.push({"name": raycast["name"], "ray": collisionResults[0].distance});
+        }
+        return collisions;
     }
 
 }

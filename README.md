@@ -2,4 +2,4 @@
 # flyIA
 
 //TODO make exports, not global in html
-bloc size
+make GA and NN with tf
