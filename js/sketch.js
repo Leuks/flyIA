@@ -17,7 +17,7 @@ function setup(){
     blocList = [];
 
     //Init butterfly high level and add it to the scene
-    butterfly = new Butterfly();
+    butterfly = Butterfly.createNewButterfly();
     scene.add(butterfly.sphere);
 
     animate();
@@ -34,10 +34,10 @@ function animate () {
     }
 
     //Move forward
-    butterfly.goForward(0.5);
+    butterfly.goForward(0.2);
     adjustCameraPosition();
 
-    generateNewBloc(camera.position.z - dist_to_create_bloc)
+    generateNewBloc(butterfly.position.z - dist_to_create_bloc)
 
     //Removes blocks that are no longer visible
     blocToRemove = blocList.filter(bloc => bloc.position.z > butterfly.position.z);
