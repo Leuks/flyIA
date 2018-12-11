@@ -17,7 +17,7 @@ class Butterfly {
         this.sphere = mesh;
 
         //Init NN
-        this.brain = new NNModel(17, 15, 2);
+        this.brain = new NNModel(brain_input_size, brain_hidden_size, brain_output_size);
     }
 
     /**
@@ -38,6 +38,19 @@ class Butterfly {
         let butterfly = new Butterfly(...parameters);
         butterfly.brain.dispose();
         butterfly.brain = brain;
+        return butterfly;
+    }
+
+    /**
+     * Create all parameters for a butterfly from existing weights
+     * @returns {*[]}
+     */
+    static createNewButterflyWithBrain(sketch, inputWeights, outputWeights){
+        let parameters = Butterfly.createInitParameters(sketch);
+        let butterfly = new Butterfly(...parameters);
+        butterfly.brain.dispose();
+        butterfly.brain.inputWeights = inputWeights;
+        butterfly.brain.outputWeights = outputWeights;
         return butterfly;
     }
 

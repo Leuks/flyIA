@@ -3,10 +3,12 @@ class GeneticAlgorithm {
         this.size = butPerGen;
         this.sketch = sketch;
         this.numberOfGens = numberOfgens;
+        this.finish = false;
 
         this.genCount = 0;
         this.best = Butterfly.createNewButterfly(this.sketch);
         this.maxDistance = 0;
+        this.noBetterCount = 0;
 
         this.pivot = (ga_best_precent * this.size) / 100;
         this.currentPopulation = [];
@@ -28,6 +30,15 @@ class GeneticAlgorithm {
      * Create the next generation by applying GA concepts on last generation
      */
     generateNextGeneration() {
+        if(this.finish)
+            return;
+
+        if(this.genCount >= this.numberOfGens || this.noBetterCount > 10){
+            this.sketch.endOfSimulation();
+            this.finish = true;
+            return;
+        }
+
         let next_generation = [];
         this.sort();
 
@@ -174,6 +185,8 @@ class GeneticAlgorithm {
             this.best = best;
             this.maxDistance = best.distance;
         }
+        else
+            this.noBetterCount ++;
 
     }
 
@@ -188,11 +201,5 @@ class GeneticAlgorithm {
             }
         }
         return this.currentPopulation[index];
-    }
-
-    saveBest(){
-        //toPromise
-        serialize(best[O]);
-        serialize(best[1]);
     }
 }

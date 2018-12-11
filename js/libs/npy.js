@@ -16,7 +16,7 @@ limitations under the License.
 
 
 /** Serializes a tensor into a npy file contents. */
-export async function serialize(tensor) {
+async function serialize(tensor) {
     const descr = new Map([["float32", "<f4"], ["int32", "<i4"]]).get(
         tensor.dtype,
     );
@@ -76,7 +76,7 @@ export async function serialize(tensor) {
 }
 
 /** Parses an ArrayBuffer containing a npy file. Returns a tensor. */
-export function parse(ab) {
+function parse(ab) {
     assert(ab.byteLength > 5);
     const view = new DataView(ab);
     let pos = 0;
@@ -146,6 +146,63 @@ export function parse(ab) {
     } else {
         throw Error(`Unknown dtype "${header["descr"]}". Implement me.`);
     }
+}
+
+function getSize(ab){
+    assert(ab.byteLength > 5);
+    const view = new DataView(ab);
+    let pos = 0;
+
+    // First parse the magic string.
+    const byte0 = view.getUint8(pos++);
+    const magicStr = dataViewToAscii(new DataView(ab, pos, 5));
+    pos += 5;
+    if (byte0 !== 0x93 || magicStr !== "NUMPY") {
+        throw Error("Not a numpy file.");
+    }
+
+    // Parse the version
+    const version = [view.getUint8(pos++), view.getUint8(pos++)].join(".");
+    if (version !== "1.0") {
+        throw Error("Unsupported version.");
+    }
+
+    // Parse the header length.
+    const headerLen = view.getUint16(pos, true);
+    pos += 2;
+
+    // Parse the header.
+    // header is almost json, so we just manipulated it until it is.
+    //  {'descr': '<f8', 'fortran_order': False, 'shape': (1, 2), }
+    const headerPy = dataViewToAscii(new DataView(ab, pos, headerLen));
+    pos += headerLen;
+    const bytesLeft = view.byteLength - pos;
+    const headerJson = headerPy
+        .replace("True", "true")
+        .replace("False", "false")
+        .replace(/'/g, `"`)
+        .replace(/,\s*}/, " }")
+        .replace(/,?\)/, "]")
+        .replace("(", "[");
+    const header = JSON.parse(headerJson);
+    if (header.fortran_order) {
+        throw Error("NPY parse error. Implement me.");
+    }
+
+    // Finally parse the actual data.
+    let size = numEls(header.shape);
+
+    if (header["descr"] === "<f8") {
+        size *= 8;
+    } else if (header["descr"] === "<f4") {
+        size *= 4;
+    } else if (header["descr"] === "<i8") {
+        size *= 8;
+    } else {
+        throw Error(`Unknown dtype "${header["descr"]}". Implement me.`);
+    }
+
+    return size + headerLen + 10;
 }
 
 function numEls(shape) {

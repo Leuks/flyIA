@@ -1,7 +1,7 @@
 //window.addEventListener("DOMContentLoaded", function () {setup();}, false);
 
 class Sketch{
-    constructor(numberOfgens, butPerGen){
+    constructor(numberOfgens, butPerGen, weights){
         let mainContainer = $("#main");
         let appBar = $("#appbar");
 
@@ -26,12 +26,18 @@ class Sketch{
         //Globals vars high level
         this.frameCount = 0;
         this.blocList = [];
-        this.ids = 0;
         this.stop = false;
         this.appBarText = $("#appbar-text");
 
-        //Init genetic algorithm
-        this.ga = new GeneticAlgorithm(numberOfgens, butPerGen, this);
+        if(!weights){
+            //Init genetic algorithm
+            this.ids = 0;
+            this.ga = new GeneticAlgorithm(numberOfgens, butPerGen, this);
+        }
+        else{
+            //TODO ALL WITH ONE BUTTERFLY
+        }
+
     }
 
     /**
@@ -39,9 +45,11 @@ class Sketch{
      */
     start(){
         this.stop = false;
-        this.ga.generateFirstPopulation()
+        this.ga.generateFirstPopulation();
         this.resetSketch();
         this.animate();
+        this.endOfSimulation();
+
     }
 
     stop(){
@@ -158,6 +166,31 @@ class Sketch{
         let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
         let totalMax = Math.floor(- this.ga.maxDistance);
         this.appBarText.text("Generation " + this.ga.genCount + " - Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + "  - Current gen max distance: " + maxCurrent);
+    }
+
+    endOfSimulation(){
+        let promiseInput = new Promise(function(resolve, reject) {
+            resolve(serialize(this.ga.best.brain.inputWeights));
+        }.bind(this));
+
+        let promiseOutput = new Promise(function(resolve, reject) {
+            resolve(serialize(this.ga.best.brain.outputWeights));
+        }.bind(this));
+
+        Promise.all([promiseInput, promiseOutput]).then(function(values) {
+            console.log(values);
+            let file = new Blob([new Float32Array(values[0]),  new Float32Array(values[1])], {type: 'application/octet-binary'});
+            download(file, "weights.json", "application/octet-binary");
+            /*let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
+            download(json, "weights.json", "application/json");
+            window.location.replace("app.html");*/
+
+        });
+
+        /*let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
+        let totalMax = Math.floor(- this.ga.maxDistance);
+        alert("Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + " in " + this.ga.genCount + " generations");*/
+
     }
 }
 
