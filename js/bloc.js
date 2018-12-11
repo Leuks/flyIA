@@ -19,8 +19,13 @@ class Bloc{
         this.cube = mesh;
     }
 
-    static createRandomBloc(z) {
-        let visionUnits = getGlobalVisionUnitsAtZ(dist_to_create_bloc);
+    /**
+     * Create a bloc with random size at random position according to global vision units
+     * @param z
+     * @returns {Bloc}
+     */
+    static createRandomBloc(z, sketch) {
+        let visionUnits = getGlobalVisionUnitsAtZ(dist_to_create_bloc, sketch);
         let width = visionUnits["width"];
         let height = visionUnits["height"];
 

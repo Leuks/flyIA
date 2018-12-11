@@ -1,28 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-        body { margin: 0; }
-        canvas { width: 100%; height: 100% }
-    </style>
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"> </script>
+
+    <!-- Load Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- Load CSS -->
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.9/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 
     <!-- Load TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3/dist/tf.min.js"> </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> </script>
 
-    <!-- Load three.js -->
+    <!-- Load JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.9/js/fileinput.min.js"></script>
 
-    <!-- Load local js files -->
+    <!-- Load local files -->
+    <script src="js/sketch.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/libs/npy.js"></script>
+    <script src="js/nn/nn.js"></script>
+    <script src="js/nn/ga.js"></script>
     <script src="js/utils/const.js"></script>
     <script src="js/utils/utils.js"></script>
     <script src="js/butterfly.js"></script>
     <script src="js/bloc.js"></script>
-    <script src="js/sketch.js"></script>
+
 
     <meta charset="UTF-8">
 
     <title>ButterflyIA</title>
 </head>
 <body>
+
+<nav class="navbar navbar-default navbar-static-top" id="appbar">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="app.html">flyIA</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a data-toggle="modal" href="#modal-gen-parameters" >Start simulation</a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="modal" href="#modal-load-weights" >Load weights</a>
+                </li>
+            </ul>
+            <div class="navbar-right">
+                <span class="navbar-text" id="appbar-text"></span>
+            </div>
+        </div>
+
+
+    </div>
+</nav>
+
+
+<div id="main">
+    <h1 class="text-center">Welcome !</h1>
+</div>
+
+<!-- modals -->
+<div class="modal" tabindex="-1" role="dialog" id="modal-gen-parameters">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Parameters for simulation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="gencount">Number of generations</label>
+                <input type="number" class="form-control" id="gencount" aria-describedby="Number of generations" value="10">
+                <hr>
+                <label for="butpergen">Number of butterflies per generation (>100)</label>
+                <input type="number" class="form-control" id="butpergen" aria-describedby="Number of butterfly per generation" value="100">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="checkGaParametersInputs();">Start simulation</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="modal-load-weights">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Load weights file</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="input-weights" type="file" class="file" data-show-preview="true" data-show-upload="false"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="checkGaParametersInputs();">Start</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
-</html>
