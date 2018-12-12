@@ -48,8 +48,6 @@ class Sketch{
         this.ga.generateFirstPopulation();
         this.resetSketch();
         this.animate();
-        this.endOfSimulation();
-
     }
 
     stop(){
@@ -181,15 +179,15 @@ class Sketch{
             console.log(values);
             let file = new Blob([new Float32Array(values[0]),  new Float32Array(values[1])], {type: 'application/octet-binary'});
             download(file, "weights.json", "application/octet-binary");
-            /*let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
+            let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
             download(json, "weights.json", "application/json");
-            window.location.replace("app.html");*/
+            window.location.replace("app.html");
 
         });
 
-        /*let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
+        let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
         let totalMax = Math.floor(- this.ga.maxDistance);
-        alert("Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + " in " + this.ga.genCount + " generations");*/
+        alert("Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + " in " + this.ga.genCount + " generations");
 
     }
 }
