@@ -1,7 +1,7 @@
 //window.addEventListener("DOMContentLoaded", function () {setup();}, false);
 
 class Sketch{
-    constructor(numberOfgens, butPerGen, weights){
+    constructor(numberOfGens, butPerGen, weights){
         let mainContainer = $("#main");
         let appBar = $("#appbar");
 
@@ -29,15 +29,9 @@ class Sketch{
         this.stop = false;
         this.appBarText = $("#appbar-text");
 
-        if(!weights){
-            //Init genetic algorithm
-            this.ids = 0;
-            this.ga = new GeneticAlgorithm(numberOfgens, butPerGen, this);
-        }
-        else{
-            //TODO ALL WITH ONE BUTTERFLY
-        }
-
+        //Init genetic algorithm
+        this.ids = 0;
+        this.ga = new GeneticAlgorithm(numberOfGens, butPerGen, this, weights);
     }
 
     /**
@@ -60,13 +54,12 @@ class Sketch{
 
         this.frameCount ++;
 
+        //#### BLOC ###
         //Limit bloc creation
         if(this.frameCount % 2 == 0){
+            //Generate new bloc in front of the butterfly
             this.generateNewBloc(this.camera.position.z - dist_to_create_bloc);
         }
-
-        //#### BLOC ###
-        //Generate new bloc in front of the butterfly
 
         //Removes blocks that are no longer visible
         let blocToRemove = this.blocList.filter(bloc => bloc.position.z > this.camera.position.z);
@@ -76,12 +69,10 @@ class Sketch{
             this.disposeSceneChild(bloc.cube)
         }
 
-
         //#### GA Butterfly ###
         //Move forward
-        let population = this.ga.currentPopulation;
-        for(let i = 0; i < population.length; i++){
-            let elem = population[i];
+        for(let i = 0; i < this.ga.currentPopulation.length; i++){
+            let elem = this.ga.currentPopulation[i];
             elem.goForward(0.1);
         }
 
@@ -163,32 +154,36 @@ class Sketch{
     updateText(){
         let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
         let totalMax = Math.floor(- this.ga.maxDistance);
-        this.appBarText.text("Generation " + this.ga.genCount + " - Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + "  - Current gen max distance: " + maxCurrent);
+        if(this.ga.mode == mode_simulation)
+            this.appBarText.text("Generation " + this.ga.genCount + " - Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + "  - Current gen max distance: " + maxCurrent);
+        else
+            this.appBarText.text("Distance: " + (- Math.floor(this.ga.best.distance)));
     }
 
     endOfSimulation(){
-        let promiseInput = new Promise(function(resolve, reject) {
-            resolve(serialize(this.ga.best.brain.inputWeights));
-        }.bind(this));
+        if(this.ga.mode == mode_simulation){
+            let promiseInput = new Promise(function(resolve, reject) {
+                resolve(serialize(this.ga.best.brain.inputWeights));
+            }.bind(this));
 
-        let promiseOutput = new Promise(function(resolve, reject) {
-            resolve(serialize(this.ga.best.brain.outputWeights));
-        }.bind(this));
+            let promiseOutput = new Promise(function(resolve, reject) {
+                resolve(serialize(this.ga.best.brain.outputWeights));
+            }.bind(this));
 
-        Promise.all([promiseInput, promiseOutput]).then(function(values) {
-            console.log(values);
-            let file = new Blob([new Float32Array(values[0]),  new Float32Array(values[1])], {type: 'application/octet-binary'});
-            download(file, "weights.json", "application/octet-binary");
-            let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
-            download(json, "weights.json", "application/json");
-            window.location.replace("app.html");
+            Promise.all([promiseInput, promiseOutput]).then(function(values) {
+                let file = new Blob([new Float32Array(values[0]),  new Float32Array(values[1])], {type: 'application/octet-binary'});
+                download(file, "weights.json", "application/octet-binary");
+                let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
+                download(json, "weights.json", "application/json");
+                window.location.replace("app.html");
+            });
 
-        });
-
-        let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
-        let totalMax = Math.floor(- this.ga.maxDistance);
-        alert("Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + " in " + this.ga.genCount + " generations");
-
+            let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
+            let totalMax = Math.floor(- this.ga.maxDistance);
+            alert("Max distance: " + (totalMax != 0 ? totalMax : maxCurrent) + " in " + this.ga.genCount + " generations");
+        }
+        else
+            alert("Max distance for this model: " + (- Math.floor(this.ga.best.distance)));
     }
 }
 

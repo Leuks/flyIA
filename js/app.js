@@ -16,12 +16,13 @@ function checkGaParametersInputs(){
 }
 
 function startSimulation(numberOfgens, butterfliesPerGeneration){
-    let sketch = new Sketch(numberOfgens, butterfliesPerGeneration);
+    let sketch = new Sketch(numberOfgens, butterfliesPerGeneration, undefined);
     sketch.start();
 }
 
 function startModel(weights){
-
+    let sketch = new Sketch(1, 1, weights);
+    sketch.start();
 }
 
 function loadWeights(){
@@ -33,7 +34,7 @@ function loadWeights(){
         let inputWeights = parse(reader.result.slice(0, getSize(reader.result)));
         let outputWeights = parse(reader.result.slice(getSize(reader.result), reader.byteLength));
         startModel([inputWeights, outputWeights])
-    }
+    };
 
     reader.readAsArrayBuffer(file);
 }

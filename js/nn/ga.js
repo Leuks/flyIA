@@ -1,29 +1,39 @@
 class GeneticAlgorithm {
-    constructor(numberOfgens, butPerGen, sketch) {
+    constructor(numberOfGens, butPerGen, sketch, weights) {
+        this.genCount = 1;
         this.size = butPerGen;
+        this.numberOfGens = numberOfGens;
         this.sketch = sketch;
-        this.numberOfGens = numberOfgens;
         this.finish = false;
-
-        this.genCount = 0;
-        this.best = Butterfly.createNewButterfly(this.sketch);
         this.maxDistance = 0;
         this.noBetterCount = 0;
+        this.currentPopulation = [];
+
+        if(!weights){
+            this.mode = mode_simulation;
+            this.best = Butterfly.createNewButterfly(sketch);
+        }
+        else{
+            this.mode = mode_model;
+            this.best = Butterfly.createNewButterflyWithWeights(sketch, weights[0], weights[1]);
+            this.currentPopulation.push(this.best);
+        }
 
         this.pivot = (ga_best_precent * this.size) / 100;
-        this.currentPopulation = [];
     }
 
     /**
      * Generate the first population with random butterflies
      */
     generateFirstPopulation() {
+        if(this.mode == mode_model)
+            return;
+
         for(let i = 0; i < this.size; i++){
             this.currentPopulation.push(Butterfly.createNewButterfly(this.sketch));
         }
 
         this.genCount ++;
-        //this.updateText();
     }
 
     /**
@@ -33,7 +43,7 @@ class GeneticAlgorithm {
         if(this.finish)
             return;
 
-        if(this.genCount >= this.numberOfGens || this.noBetterCount > 10){
+        if(this.mode == mode_model || this.genCount >= this.numberOfGens || this.noBetterCount > 10){
             this.sketch.endOfSimulation();
             this.finish = true;
             return;
@@ -41,7 +51,6 @@ class GeneticAlgorithm {
 
         let next_generation = [];
         this.sort();
-
         this.updateMaxDistance();
 
         this.getElites(next_generation);

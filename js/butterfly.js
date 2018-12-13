@@ -45,7 +45,7 @@ class Butterfly {
      * Create all parameters for a butterfly from existing weights
      * @returns {*[]}
      */
-    static createNewButterflyWithBrain(sketch, inputWeights, outputWeights){
+    static createNewButterflyWithWeights(sketch, inputWeights, outputWeights){
         let parameters = Butterfly.createInitParameters(sketch);
         let butterfly = new Butterfly(...parameters);
         butterfly.brain.dispose();
