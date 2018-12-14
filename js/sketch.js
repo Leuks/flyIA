@@ -124,6 +124,10 @@ class Sketch{
         this.camera.position.z -= 0.1;
     }
 
+    /**
+     * Remove the child parameter from the scene and dispose geometry and material
+     * @param child
+     */
     disposeSceneChild(child){
         this.scene.remove(child);
         child.geometry.dispose();
@@ -161,6 +165,7 @@ class Sketch{
     }
 
     endOfSimulation(){
+        this.stop();
         if(this.ga.mode == mode_simulation){
             let promiseInput = new Promise(function(resolve, reject) {
                 resolve(serialize(this.ga.best.brain.inputWeights));

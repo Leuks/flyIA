@@ -187,7 +187,9 @@ class GeneticAlgorithm {
         return present;
     }
 
-
+    /**
+     * Get best element and update the GA best and max distance
+     */
     updateMaxDistance(){
         let best = this.currentPopulation[0];
         if(best.distance < this.maxDistance){
@@ -196,9 +198,12 @@ class GeneticAlgorithm {
         }
         else
             this.noBetterCount ++;
-
     }
 
+    /**
+     * Find the farthest butterfly
+     * @returns The farthest butterfly
+     */
     getFarthestButterfly() {
         let max = 0;
         let index = 0;
