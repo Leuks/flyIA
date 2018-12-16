@@ -165,7 +165,6 @@ class Sketch{
     }
 
     endOfSimulation(){
-        this.stop();
         if(this.ga.mode == mode_simulation){
             let promiseInput = new Promise(function(resolve, reject) {
                 resolve(serialize(this.ga.best.brain.inputWeights));

@@ -32,8 +32,6 @@ class GeneticAlgorithm {
         for(let i = 0; i < this.size; i++){
             this.currentPopulation.push(Butterfly.createNewButterfly(this.sketch));
         }
-
-        this.genCount ++;
     }
 
     /**

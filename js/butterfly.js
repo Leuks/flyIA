@@ -154,8 +154,8 @@ class Butterfly {
             let heightPred = pred[1];
 
             let visionUnits = getGlobalVisionUnitsAtZ(dist_to_create_butterfly, this.sketch);
-            let width = visionUnits["width"];
-            let height = visionUnits["height"];
+            let width = visionUnits["width"] - 1;
+            let height = visionUnits["height"] - 1;
 
             if(widthPred > 0.5 && this.position.x < width){
                 this.goRight();
