@@ -177,9 +177,7 @@ class Sketch{
             Promise.all([promiseInput, promiseOutput]).then(function(values) {
                 let file = new Blob([new Float32Array(values[0]),  new Float32Array(values[1])], {type: 'application/octet-binary'});
                 download(file, "weights.json", "application/octet-binary");
-                let json = JSON.stringify({"1": new Float32Array(values[0]), "2": new Float32Array(values[1])})
-                download(json, "weights.json", "application/json");
-                window.location.replace("app.html");
+
             });
 
             let maxCurrent = - Math.floor(this.ga.getFarthestButterfly().distance);
@@ -188,6 +186,8 @@ class Sketch{
         }
         else
             alert("Max distance for this model: " + (- Math.floor(this.ga.best.distance)));
+
+        setTimeout(function(){ window.location.replace("app.html") }, 1000);
     }
 }
 
