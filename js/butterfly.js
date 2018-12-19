@@ -13,12 +13,43 @@ class Butterfly {
         let meshGeometry = new THREE.SphereGeometry(0.5, 32, 32);
         let mesh = new THREE.Mesh(meshGeometry, meshMaterial);
 
-        mesh.position.copy(this.position);
-        this.sphere = mesh;
 
+        let loader = new THREE.OBJLoader();
+        this.sphere = new THREE.Group;
+
+        // load a resource
+
+            loader.load('models/MONARCH.OBJ',
+
+                function ( object ) {
+                    for(let i = 0; i < object.children.length; i++){
+                        let child = object.children[i];
+                        if ( child.isMesh ){
+                            child.rotateX(-1,5708);
+                            child.scale.set(10,10,10)
+                            console.log(child)
+                            this.sphere.add(child);
+                        }
+                    }
+
+                    this.sphere.position.copy(this.position);
+                }.bind(this),
+
+                function ( xhr ) {
+                    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+                },
+
+                function ( error ) {
+                    console.log( 'An error happened' );
+                }
+            )
+
+
+        //this.sphere = object;
         //Init NN
         this.brain = new NNModel(brain_input_size, brain_hidden_size, brain_output_size);
     }
+
 
     /**
      * Create a new random butterfly

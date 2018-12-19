@@ -56,7 +56,7 @@ class Sketch{
 
         //#### BLOC ###
         //Limit bloc creation
-        if(this.frameCount % 2 == 0){
+        if(this.frameCount % 3 == 0){
             //Generate new bloc in front of the butterfly
             this.generateNewBloc(this.camera.position.z - dist_to_create_bloc);
         }
@@ -73,7 +73,7 @@ class Sketch{
         //Move forward
         for(let i = 0; i < this.ga.currentPopulation.length; i++){
             let elem = this.ga.currentPopulation[i];
-            elem.goForward(0.1);
+            elem.goForward(distance_forward);
         }
 
         this.adjustCameraPosition();
@@ -121,18 +121,20 @@ class Sketch{
 
         let butterfly = population[index];
         camera.position.set(butterfly.position.x, butterfly.position.y, butterfly.position.z + dist_for_observation);*/
-        this.camera.position.z -= 0.1;
+        this.camera.position.z -= distance_forward;
     }
 
     /**
-     * Remove the child parameter from the scene and dispose geometry and material
-     * @param child
+     * Remove the THREE.Group parameter from the scene and dispose his childs geometries and materials
+     * @param THREE.Group
      */
-    disposeSceneChild(child){
-        this.scene.remove(child);
-        child.geometry.dispose();
-        child.material.dispose();
-        child = undefined;
+    disposeSceneChild(childGroup){
+        this.scene.remove(childGroup);
+        childGroup.children.forEach(function(child){
+            child.geometry.dispose();
+            child.material.dispose();
+            child = undefined;
+        }.bind(this));
     }
 
     /**
