@@ -10,9 +10,9 @@ Severals blocks with different sizes and positions are randomly instanced to cre
 
 Click on the **Start Simulation** button. You may create a simulation by indicating the number of generation wanted for the genetic algorithm and the number of butterflies per generation. The simulation will stop in two cases:
 * The number of generation is reached by the simulation
-* There is no better results (fitnes) since 10 generations
+* There is no better results (fitness) since 10 generations
 
-At the end of the simulation, neural network's weights of the best butterfly are downloaded. You may load them to start a modelization which is a simulation with one butterfly.
+At the end of the simulation, neural network's weights of the best butterfly are downloaded. You may load them to start a race which is a simulation with one butterfly.
 
 ## Race
 Click on the **Load weights** button. The race is accessible after a simulation. It's a way to see your best butterfly evolve in the environment.
